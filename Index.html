@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Cahier des Charges - Rétention Étudiante</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- BARRE D'ACTIONS JS -->
+  <div class="action-bar no-print">
+    <button id="btnPrint" class="btn btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Exporter en PDF
+    </button>
+  </div>
+
+  <!-- EN-TÊTE CORPORATE -->
+  <div class="document-header">
+    <div class="doc-title-group">
+      <h1>Cahier des Charges</h1>
+      <div class="subtitle">Tableau de Bord & Analyse de la Rétention Étudiante</div>
+    </div>
+  </div>
+
+  <!-- MÉTADONNÉES -->
+  <div class="meta-grid">
+    <div class="meta-item">
+      <span class="meta-label">Projet</span>
+      <span class="meta-value">BI & Analytics</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Statut</span>
+      <span class="meta-value" style="color: #15803d;">Validé</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Outils</span>
+      <span class="meta-value">Power BI / Query</span>
+    </div>
+    <div class="meta-item">
+      <span class="meta-label">Progression</span>
+      <span class="meta-value" id="progressText">0%</span>
+    </div>
+  </div>
+
+  <!-- BARRE DE PROGRESSION DYNAMIQUE (JS) -->
+  <div class="progress-container no-print">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h2>1. Contexte & Objectif</h2>
+  <div class="info-card">
+    <p><strong>Contexte :</strong> L'établissement souhaite analyser les parcours étudiants pour anticiper les abandons au fil des semestres.</p>
+    <p><strong>Objectif :</strong> Utiliser <strong>Power Query</strong> et <strong>Power BI</strong> pour nettoyer, structurer et visualiser les données afin de repérer les facteurs clés du décrochage (<span class="code">Target Dropout Nextsem</span>) et piloter les plans d'aide.</p>
+  </div>
+
+  <!-- SECTION 2 -->
+  <h2>2. Périmètre des Données</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 30%;">Attribut</th>
+        <th style="width: 70%;">Détails</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Fichier source</strong></td>
+        <td><span class="code">academic_survival_longitudinal.csv</span></td>
+      </tr>
+      <tr>
+        <td><strong>Volume</strong></td>
+        <td>~79 239 lignes / 22 colonnes</td>
+      </tr>
+      <tr>
+        <td><strong>Granularité</strong></td>
+        <td>Données semestrielles par étudiant (<span class="code">Student_ID</span> + <span class="code">Semester</span>)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 3 -->
+  <h2>3. Feuille de Route Technique</h2>
+
+  <div class="step-box">
+    <div class="step-header">
+      <div class="step-title">Étape 1 : Préparation & Nettoyage (Power Query)</div>
+      <button class="toggle-btn no-print">&minus;</button>
+    </div>
+    <div class="step-content">
+      <ul class="task-list">
+        <li><label><input type="checkbox"> <strong>Nettoyage du bruit catégoriel :</strong> Normalisation du genre (<span class="code">"Femme"</span>, <span class="code">"femme"</span>, <span class="code">"F"</span> &rarr; <span class="code">Femme</span>) et uniformisation Logement/Bourses.</label></li>
+        <li><label><input type="checkbox"> <strong>Gestion des valeurs manquantes :</strong> Imputation ou filtrage des nulls dans <span class="code">Family_Income</span> et <span class="code">LMS_Logins</span>.</label></li>
+        <li><label><input type="checkbox"> <strong>Typage des données :</strong> Vérification stricte des formats Texte (<span class="code">ID</span>), Entiers (<span class="code">Semestres</span>), Décimaux (<span class="code">GPA</span>).</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-header">
+      <div class="step-title">Étape 2 : Modélisation & Mesures DAX</div>
+      <button class="toggle-btn no-print">&minus;</button>
+    </div>
+    <div class="step-content">
+      <ul class="task-list">
+        <li><label><input type="checkbox"> <strong>Effectif Total :</strong> <span class="code">DISTINCTCOUNT (Data[Student_ID])</span></label></li>
+        <li><label><input type="checkbox"> <strong>Taux d'Abandon :</strong> <span class="code">AVERAGE (Data[TargetDropoutNextsem])</span></label></li>
+        <li><label><input type="checkbox"> <strong>Engagement Digital :</strong> <span class="code">AVERAGE (Data[LMS_Logins])</span></label></li>
+        <li><label><input type="checkbox"> <strong>Performance :</strong> Évolution de la moyenne générale (<span class="code">GPA</span>) inter-semestrielle.</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-box">
+    <div class="step-header">
+      <div class="step-title">Étape 3 : Conception du Tableau de Bord (Power BI)</div>
+      <button class="toggle-btn no-print">&minus;</button>
+    </div>
+    <div class="step-content">
+      <ul class="task-list">
+        <li><label><input type="checkbox"> <strong>Page 1 | Vue d'Ensemble :</strong> Cartes KPIs, Graphique en barres (Taux d'abandon par semestre), Filtres (Genre, Logement, Bourse).</label></li>
+        <li><label><input type="checkbox"> <strong>Page 2 | Analyse Socio-économique :</strong> Dispersion (<span class="code">Family_Income</span> vs Frais) & Barres empilées (Abandon / Revenu).</label></li>
+        <li><label><input type="checkbox"> <strong>Page 3 | Engagement & Prévention :</strong> Courbe de corrélation (LMS vs Notes) & Matrice de risque.</label></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SECTION 4 -->
+  <h2>4. Livrables Attendus</h2>
+  <table>
+    <thead>
+      <tr>
+        <th style="width: 25%;">Livrable</th>
+        <th style="width: 15%;">Format</th>
+        <th style="width: 60%;">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Fichier de Travail</strong></td>
+        <td><span class="code">.xlsx</span></td>
+        <td>Requêtes Power Query enregistrées pour automatisation.</td>
+      </tr>
+      <tr>
+        <td><strong>Rapport Interactif</strong></td>
+        <td><span class="code">.pbix</span></td>
+        <td>Dashboard 3 pages avec modèle de données complet.</td>
+      </tr>
+      <tr>
+        <td><strong>Note Stratégique</strong></td>
+        <td><span class="code">.pdf</span></td>
+        <td>Synthèse des 3 leviers d'action (ex: ciblage des bourses au S2).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- FOOTER -->
+  <div class="document-footer">
+    <span>Cahier des charges — Projet Rétention Étudiante</span>
+    <span>Confidentiel — Usage Interne</span>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
